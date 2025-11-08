@@ -1,0 +1,21 @@
+# Pliki środowiskowych
+.env
+
+# Pliki środowiskowe Pythona / virtualenv
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Pliki tymczasowe / generowane
+*.log
+*.tmp
+*.bak
+
+# Systemowe (Windows / macOS)
+.DS_Store
+Thumbs.db
+
+# IDE / edytory
+.vscode/
+.idea/
