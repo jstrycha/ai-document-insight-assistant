@@ -11,7 +11,7 @@ from .config import (
     AZURE_FORM_RECOGNIZER_ENDPOINT,
     AZURE_FORM_RECOGNIZER_KEY,
     AZURE_OPENAI_ENDPOINT,
-    AZURE_OPENAI_KEY,
+    AZURE_OPENAI_API_KEY,
     AZURE_OPENAI_DEPLOYMENT,
     AZURE_OPENAI_API_VERSION,
     REPO_DOCS_DIR,
@@ -85,7 +85,7 @@ def get_openai_client() -> AzureOpenAI:
     Wersja API jest pobierana z .env (AZURE_OPENAI_API_VERSION).
     """
     client = AzureOpenAI(
-        api_key=AZURE_OPENAI_KEY,
+        api_key=AZURE_OPENAI_API_KEY,
         azure_endpoint=AZURE_OPENAI_ENDPOINT,
         api_version=AZURE_OPENAI_API_VERSION,
     )

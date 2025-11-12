@@ -6,8 +6,9 @@ Projekt wykorzystuje:
 - **Azure OpenAI** – do generowania streszczeń i punktów.
 
 Program działa jako **prosta aplikacja CLI** (z linii komend) i może pracować:
+- na **dokumentach przykładowych** przechowywanych w repozytorium (folder `data/test_docs/`),
 - na **dokumentach lokalnych** (podanych ścieżką),
-- na **dokumentach przykładowych** przechowywanych w repozytorium (folder `docs/`).
+- na **dokumentach zamieszczonych w internecie** (URL do pliku).
 
 ### Zakres prac
 1. Przygotowanie zestawu dokumentów testowych (wykorzystane zostały doc z https://www.kaggle.com/datasets) 
@@ -35,9 +36,11 @@ Program działa jako **prosta aplikacja CLI** (z linii komend) i może pracować
 4. [Konfiguracja środowiska](#konfiguracja-środowiska)
 5. [Uruchamianie programu](#uruchamianie-programu)
 6. [Technologie i biblioteki](#technologie-i-biblioteki)
-7. [Rozwiązywanie najczęstszych problemów](#rozwiązywanie-najczęstszych-problemów)
-8. [Licencja](#licencja)
-9. [Lista autorów](#lista-autorów)
+7. [Pomysły na rozwój asystenta](#pomysły-na-rozwój-asystenta)
+8. [Testowanie i weryfikacja działania](#testowanie-i-weryfikacja-działania)
+9. [Rozwiązywanie najczęstszych problemów](#rozwiązywanie-najczęstszych-problemów)
+10. [Licencja](#licencja)
+11. [Lista autorów](#lista-autorów)
 
 ---
 ## Struktura projektu
@@ -331,6 +334,114 @@ Plik JSON zawiera m.in.:
 | `json`, `sys` *(standardowe moduły)* | Przetwarzanie danych i argumentów programu |
 
 ---
+
+## Pomysły na rozwój asystenta
+Wykonany projekt jest jedynie podstawową wersją asytenta Azure AI document insight. Możliwości rozwoju asystenta jest wiele, do przykładowych można zaliczyć:
+
+
+### 1. Udoskonalenie jakości streszczeń
+- **Analiza kontekstowa i porównawcza** — wykorzystanie modeli embeddingowych (np. `text-embedding-3-large`) do oceny podobieństwa między oryginałem a streszczeniem
+- **Różne style streszczeń** – np. streszczenie techniczne, biznesowe, dla menedżera, lub skrócone „TL;DR”
+- **Personalizacja tonu** – wybór tonu (formalny, neutralny, zrozumiały dla laika)
+
+---
+### 2. Automatyczna ewaluacja wyników
+- Dodanie **metryk jakości streszczeń** dla automatycznej oceny skuteczności
+- Tworzenie raportów porównawczych: jak bardzo model różni się od streszczenia wzorcowego
+- Możliwość zapisu historii testów i wyników do CSV/JSON
+
+---
+### 3. Interfejs użytkownika 
+- **Integracja z Teams / Outlook / SharePoint** – automatyczne streszczenia dla załączników
+- **Tryb batchowy** – przetwarzanie wielu dokumentów naraz i generowanie zbiorczych raportów
+
+---
+### 4. Usprawnienia techniczne
+- **Dzielenie długich dokumentów** na fragmenty i streszczanie sekcjami, aby ominąć limity tokenów modeli OpenAI
+- **Kolejkowanie zadań** (np. przez Azure Queue lub Celery) dla równoległego przetwarzania wielu plików
+- **Cache wyników** – zapisywanie już przetworzonych streszczeń, aby uniknąć ponownego zużycia tokenów
+
+---
+
+### 5. Bezpieczeństwo i zgodność
+- Wsparcie dla **Azure Key Vault** – bezpieczne przechowywanie kluczy API
+- Automatyczne **anonimizowanie danych wrażliwych** w dokumentach (np. imion, numerów, adresów)
+- **Monitorowanie wykorzystania API** – statystyki liczby zapytań, kosztów i błędów
+
+---
+
+### 6. Rozszerzenie funkcjonalności AI
+- Dodanie modułu **„pytania do dokumentu” (Document Q&A)** – użytkownik może zadawać pytania, a model odpowiada na podstawie treści pliku
+- **Klasyfikacja dokumentów** (np. faktura, raport, umowa) przed streszczaniem
+- **Wykrywanie kluczowych encji** (nazwy firm, daty, kwoty, osoby) i prezentowanie ich w formie tabeli lub JSON
+
+---
+
+### 7. Analiza trendów i metadanych
+- Agregacja danych z wielu streszczeń w jeden raport zbiorczy
+- Analiza często powtarzających się tematów, pojęć lub nazw w dużych zbiorach dokumentów
+- Eksport wyników do formatów BI (np. CSV, JSON, Power BI dataset)
+
+---
+
+### 8. Rozszerzenie językowe
+- Wsparcie dla wielu języków (automatyczne wykrywanie języka dokumentu i dobór odpowiedniego modelu)  
+- Możliwość **tłumaczenia streszczeń** np. z polskiego na angielski lub odwrotnie
+- Lokalizacja interfejsu (PL/EN/inne)
+
+---
+
+## Testowanie i weryfikacja działania
+
+W ramach projektu przygotowano plan testów funkcjonalnych i jakościowych aplikacji **AI document insight assistant**.  
+Ze względu na ograniczenia czasowe jedynie podstawowe testy zostały przeprowadzone, część możliwych do wykonania testów została jedynie zaplanowana koncepcyjnie (pomysły do dalszego rozwoju).
+
+---
+
+### Przeprowadzone testy
+
+1. **Test działania dla wszystkich trzech trybów uruchomienia:**
+   - Wybór dokumentu z lokalnego folderu `data/test_docs/`,
+   - Wskazanie własnej ścieżki do pliku (PDF/DOCX),
+   - Podanie adresu URL do pliku (np. z GitHuba lub innego źródła online).
+
+   **Wyniki**: w każdym przypadku zweryfikowano, że aplikacja poprawnie:
+   - rozpoznaje plik,
+   - przetwarza go,
+   - generuje streszczenie i listę kluczowych punktów,
+   - zapisuje wynik w pliku `.summary.json`.
+
+2. **Test sensowności wygenerowanych streszczeń:**
+   - Przeanalizowano **10 różnych dokumentów** (zarówno PDF, jak i DOCX),
+   - Oceniono trafność i spójność wygenerowanych streszczeń pod kątem:
+     - zachowania głównych tez i kontekstu,
+     - poprawności językowej i logicznej,
+     - obecności kluczowych informacji z dokumentu.
+   - W testach uwzględniono również **plik pusty**, aby sprawdzić reakcję systemu i obsługę błędów.
+
+   **Wynik**: aplikacja podaje streszczenia faktycznie oparte na załączonych dokumentach. Przygotowane streszczenia i listy punktów z kluczowymi informacjami wydają się być sensowne w naszej ocenie. Ponadto asystent poprawnie rozpoznawała brak treści w pustym pliku i zwracała stosowny komunikat (*Nie dostarczono tekstu do analizy...*) bez błędów krytycznych.
+
+---
+
+### Propozycje dalszych testów (plan koncepcyjny)
+
+Poniższe testy zostały zaplanowane koncepcyjnie i mogą stanowić rozszerzenie projektu w przyszłości. Ich wykonanie wymagałoby przede wszystkim analizy znacznie większej liczby dokumentów. 
+
+|Rodzaj testu|Cel|
+|-|-|
+| Testy wydajności | Pomiar czasu przetwarzania plików różnej długości (np. 1, 10, 50 stron) |
+| Testy limitów API | Sprawdzenie zachowania przy przekroczeniu limitów tokenów Azure OpenAI i wielkości dokumentów w Form Recognizer |
+| Testy obsługi błędów sieciowych | Symulacja utraty połączenia z usługami Azure i weryfikacja działania fallbacków lokalnych |
+| Testy regresyjne | Automatyczne porównanie wyników streszczeń po aktualizacji wersji modeli |
+| Weryfikacja „drugim LLM-em” (cross-check) | Sprawdzenie, czy streszczenie nie pomija kluczowych informacji i zachowuje sens, korzystając z niezależnego modelu jako sędziego|
+| Testy spójności formatu odpowiedzi (walidacja schematu) | Upewnienie się, że model zawsze zwraca streszczenie i kluczowe punkty w założonym formacie|
+| Testy corner casów (bardzo długie i krótkie dokumenty, dokumenty z samymi obrazami, wielokolumnowe pliki, skany itp.) | Sprawdzenie działania asystenta dla szerokiego wachlarza dokumentów |
+| Testy odproności na błędy i degradację usług | Ocena działania aplikacji w przypadku braku internetu, braku uprawnień, błędnych kluczy itd. |
+| Testy powtarzalności wyniku | Sprawdzenie stabilności odpowiedzi dla tych samych danych |
+| Walidacja językowa i stylu | Ocena poprawności gramatycznej i stylistycznej wygenerowanych streszczeń i kluczowych punktów |
+
+---
+
 ## Rozwiązywanie najczęstszych problemów
 
 ### 1. Błąd uwierzytelniania (401, 403)

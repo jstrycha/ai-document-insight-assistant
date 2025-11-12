@@ -20,7 +20,7 @@ AZURE_FORM_RECOGNIZER_KEY = os.getenv("AZURE_FORM_RECOGNIZER_KEY")  # pobiera kl
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")  # pobiera adres endpointu Azure OpenAI z env
 
 # Klucz dostępu do Azure OpenAI
-AZURE_OPENAI_KEY = os.getenv("AZURE_OPENAI_KEY")  # pobiera klucz API z env
+AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")  # pobiera klucz API z env
 
 # Nazwa deploymentu (modelu) skonfigurowanego w Azure OpenAI, np. "gpt-4o-mini"
 AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT")  # pobiera nazwę deploymentu
